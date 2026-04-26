@@ -1,12 +1,9 @@
 {
+  
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "src/views/**",
-        "src/public/**",
-        "prisma/schema.prisma"
-      ]
+      "includeFiles": "{src/views/**,src/public/**,prisma/schema.prisma}"
     }
   },
   "rewrites": [
