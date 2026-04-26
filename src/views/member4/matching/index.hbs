@@ -1,0 +1,92 @@
+<section class="container-fluid app-container">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <div class="page-kicker mb-2">Module 2 Feature 4</div>
+      <h1 class="page-title h1 text-gradient mb-2">Skill-Based Internship Matching</h1>
+      <p class="page-lead mb-2">Students are ranked by overlap between their skills and each internship's required skills.</p>
+      <div class="definition-pill"><i class="bi bi-check2-circle me-1"></i>{{moduleDefinition}}</div>
+    </div>
+    <a class="btn btn-outline-light" href="/member4">Back to Dashboard</a>
+  </div>
+
+  {{#if noData}}
+    <div class="app-card p-5 text-center">
+      <h2 class="h4 fw-bold">No internships found</h2>
+      <p class="text-soft">Run <code>npm run seed</code> after setting up the database.</p>
+    </div>
+  {{else}}
+    <div class="app-card p-4 mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-lg-7">
+          <label class="form-label">Select Internship</label>
+          <select class="form-select" onchange="window.location='/member4/matching/' + this.value">
+            {{#each internships}}
+              <option value="{{id}}" {{#if (eq id ../selectedId)}}selected{{/if}}>{{title}} - {{companyName}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-lg-5">
+          <div class="text-soft small">Selected Role</div>
+          <h2 class="h5 fw-bold mb-0">{{internship.title}}</h2>
+          <div class="text-soft">{{internship.companyName}}</div>
+          {{#if stats.dataSource}}<div class="text-soft small mt-1">Data source: {{stats.dataSource}}</div>{{/if}}
+        </div>
+      </div>
+      <div class="mt-3">
+        {{#each internship.requiredSkills}}
+          <span class="skill-chip">{{skill.name}}</span>
+        {{else}}
+          <span class="text-soft">No specific skills required.</span>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-value">{{stats.totalStudents}}</div><div class="stat-label">Total Students</div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-value">{{stats.perfectMatch}}</div><div class="stat-label">Perfect Matches</div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-value">{{stats.strongMatch}}</div><div class="stat-label">Strong Matches</div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-value">{{stats.averageMatch}}%</div><div class="stat-label">Average Match</div></div></div>
+    </div>
+
+    <div class="app-card p-4 mb-4">
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <span class="text-soft fw-bold small me-2">Filter:</span>
+        <button class="btn btn-sm btn-primary match-filter" data-min="0" data-max="100">All</button>
+        <button class="btn btn-sm btn-outline-light match-filter" data-min="75" data-max="100">Strong</button>
+        <button class="btn btn-sm btn-outline-light match-filter" data-min="50" data-max="74.99">Good</button>
+        <button class="btn btn-sm btn-outline-light match-filter" data-min="25" data-max="49.99">Partial</button>
+        <button class="btn btn-sm btn-outline-light match-filter" data-min="0" data-max="24.99">Low</button>
+        <input class="form-control form-control-sm ms-lg-auto" id="matchSearch" placeholder="Search student..." style="max-width:240px" />
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="matchTable">
+          <thead><tr><th>Rank</th><th>Student</th><th>Score</th><th>Matched Skills</th><th>Missing Skills</th><th>Explanation</th></tr></thead>
+          <tbody>
+            {{#each rankedStudents}}
+              <tr class="match-row" data-pct="{{matchPercentage}}" data-name="{{studentName}}">
+                <td class="fw-bold">#{{rank}}</td>
+                <td><div class="fw-semibold">{{studentName}}</div><div class="text-soft small">{{department}}</div></td>
+                <td style="min-width:160px">
+                  <div class="fw-bold">{{matchPercentage}}%</div>
+                  <div class="progress"><div class="progress-bar" style="width: {{matchPercentage}}%"></div></div>
+                  <div class="text-soft small mt-1">{{matchedCount}}/{{requiredCount}} skills</div>
+                </td>
+                <td>
+                  {{#each matchedSkills}}<span class="skill-chip chip-success">{{this}}</span>{{else}}<span class="text-soft">-</span>{{/each}}
+                </td>
+                <td>
+                  {{#each missingSkills}}<span class="skill-chip chip-danger">{{this}}</span>{{else}}<span class="skill-chip chip-success">All matched</span>{{/each}}
+                </td>
+                <td class="text-soft small" style="min-width:220px">{{explanation}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <div id="matchEmpty" class="text-center text-soft py-4 d-none">No students match this filter.</div>
+    </div>
+  {{/if}}
+</section>
+
+<script src="/member4/js/matching.js"></script>

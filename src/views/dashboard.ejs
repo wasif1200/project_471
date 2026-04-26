@@ -1,0 +1,294 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home">
+      <span>⌂</span>
+    </a>
+  </div>
+
+  <div class="portal-brand-left">Internship + Skill Gap Analyzer</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="register-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Student Dashboard</h1>
+        <p class="portal-main-subtitle">
+          View and manage your profile information in one place
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <div class="dashboard-top-bar mb-4">
+          <div>
+            <h2 class="join-title mb-1">
+              Welcome, <%= student.firstName %> <%= student.lastName %>
+            </h2>
+            <p class="join-subtitle mb-0"><%= student.email %></p>
+          </div>
+
+          <div class="dashboard-top-actions">
+            <a href="/student/edit-profile" class="nav-btn-blue">Edit Profile</a>
+            <a href="/student/logout" class="glass-btn">Logout</a>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100 text-center">
+              <h4 class="section-heading mb-3">Personal Information</h4>
+
+              <div class="dashboard-info-list">
+                <div class="info-row">
+                  <span class="info-label">First Name</span>
+                  <span class="info-value"><%= student.firstName || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Last Name</span>
+                  <span class="info-value"><%= student.lastName || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Phone</span>
+                  <span class="info-value"><%= student.phone || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Country</span>
+                  <span class="info-value"><%= student.country || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Gender</span>
+                  <span class="info-value"><%= student.gender || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Date of Birth</span>
+                  <span class="info-value">
+                    <%= student.dateOfBirth ? new Date(student.dateOfBirth).toDateString() : 'N/A' %>
+                  </span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Resume</span>
+                  <span class="info-value">
+                    <% if (student.resume) { %>
+                      <a href="<%= student.resume %>" target="_blank" class="dashboard-link">View Resume PDF</a>
+                    <% } else { %>
+                      N/A
+                    <% } %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100">
+              <h4 class="section-heading mb-3">Academic Information</h4>
+
+              <div class="dashboard-info-list">
+                <div class="info-row">
+                  <span class="info-label">University / Institute</span>
+                  <span class="info-value"><%= student.universityName || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Degree</span>
+                  <span class="info-value"><%= student.degree || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Department</span>
+                  <span class="info-value"><%= student.department || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Semester / Year</span>
+                  <span class="info-value"><%= student.semester || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">CGPA</span>
+                  <span class="info-value"><%= student.cgpa || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Graduation Year</span>
+                  <span class="info-value"><%= student.graduationYear || 'N/A' %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 class="section-heading mb-3">Skills & Experience</h4>
+
+                   <a href="/student/edit-profile" class="nav-btn-blue">
+                        + Add Experiences
+                   </a>
+              </div>
+
+              <div class="mb-3">
+                <div class="info-label mb-2">Skills</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <% if (student.skills && student.skills.length > 0) { %>
+                    <% student.skills.forEach(skill => { %>
+                      <span class="dashboard-skill-badge"><%= skill.name %></span>
+                    <% }) %>
+                  <% } else { %>
+                    <span class="info-value">N/A</span>
+                  <% } %>
+                </div>
+              </div>
+
+              <div>
+                <div class="info-label mb-2">Experience</div>
+                <div class="dashboard-text-box">
+                  <%= student.experience || 'N/A' %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100">
+              <h4 class="section-heading mb-3">Preferences</h4>
+
+              <div class="mb-3">
+                <div class="info-label mb-2">Location Preferences</div>
+                <div class="dashboard-text-box">
+                  <%= student.locationPreferences || 'N/A' %>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="info-label mb-2">Sector Preferences</div>
+                <div class="dashboard-text-box">
+                  <%= student.sectorPreferences || 'N/A' %>
+                </div>
+              </div>
+
+              <div>
+                <div class="info-label mb-2">Additional Information</div>
+                <div class="dashboard-text-box">
+                  <%= student.additionalInformation || 'N/A' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ADD THIS HERE -->
+          <!-- Internship & Recommendation Cards Row -->
+          <div class="col-lg-6">
+            <div
+              class="section-glass dashboard-card h-100 text-center d-flex flex-column justify-content-center"
+              style="padding: 32px 24px; min-height: 220px;"
+            >
+              <h4 class="section-heading mb-3">Internships</h4>
+              <p style="margin-bottom: 20px;">
+                Explore available internship opportunities posted by companies.
+              </p>
+              <div>
+                <a href="/student/internships" class="nav-btn-blue">
+                  View Internships
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div
+              class="section-glass dashboard-card h-100 text-center d-flex flex-column justify-content-center"
+              style="padding: 32px 24px; min-height: 220px;"
+            >
+              <h4 class="section-heading mb-3">Recommended Internships</h4>
+              <p style="margin-bottom: 20px;">
+                Get personalized internship suggestions based on your skills,
+                preferences, and experience.
+              </p>
+              <div>
+                <a href="/student/recommendations" class="nav-btn-blue">
+                  View Recommendations
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100 text-center d-flex flex-column align-items-center justify-content-center">
+              <h4 class="section-heading mb-3">Practical Experience Rating</h4>
+          
+              <% if (certificate) { %>
+                <div class="mb-2">
+                  <strong>Company:</strong>
+                  <span><%= certificate.companyName || 'N/A' %></span>
+                </div>
+          
+                <div class="mb-3">
+                  <strong>Duration:</strong>
+                  <span><%= certificate.durationMonths || 'N/A' %> month(s)</span>
+                </div>
+          
+                <div class="mb-3">
+                  <strong>Rating:</strong>
+                  <div class="stars" style="margin-top: 8px; font-size: 20px; display: flex; justify-content: center; gap: 6px;">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                      <% if (i <= certificate.experienceRating) { %>
+                        <span style="color: gold;">★</span>
+                      <% } else { %>
+                        <span class="empty-star" style="color: #ccc;">☆</span>
+                      <% } %>
+                    <% } %>
+                  </div>
+                </div>
+          
+                <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                  <a href="/certificates/view/<%= certificate.id %>" class="nav-btn-blue" target="_blank">
+                    View Certificate
+                  </a>
+                  <a href="/certificates" class="glass-btn">
+                    Add / Update Certificate
+                  </a>
+                </div>
+              <% } else { %>
+                <p class="mb-3">No certificate uploaded yet.</p>
+          
+                <a href="/certificates" class="nav-btn-blue">
+                  Add Certificate
+                </a>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100 text-center">
+              <h4 class="section-heading mb-3">Career Report</h4>
+              <p>Generate your complete career analysis report.</p>
+              <a href="/student/career-report" class="nav-btn-blue">
+               View Report
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100 text-center">
+              <h4 class="section-heading mb-3">My Applications</h4>
+              <p>Track all your internship applications and their status.</p>
+              <a href="/applications/my" class="nav-btn-blue">
+                   View My Applications
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,94 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home"><span>⌂</span></a>
+  </div>
+
+  <div class="portal-brand-left">Industry<br>Portal</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="portal-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Manage Internship Posts</h1>
+        <p class="portal-main-subtitle">
+          Review your posted internships and keep your company opportunities updated.
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <div class="dashboard-top-bar mb-4">
+          <div>
+            <h2 class="join-title mb-1">Your Internship Posts</h2>
+            <p class="join-subtitle mb-0">Total: <%= internships.length %></p>
+          </div>
+
+          <div class="dashboard-top-actions">
+            <a href="/company/internships/create" class="nav-btn-blue">Post New</a>
+            <a href="/company/dashboard" class="glass-btn">Back to Dashboard</a>
+          </div>
+        </div>
+
+        <% if (internships.length === 0) { %>
+          <div class="section-glass">
+            <div class="dashboard-text-box">No internships posted yet.</div>
+          </div>
+        <% } else { %>
+          <div class="row g-4">
+            <% internships.forEach(internship => { %>
+              <div class="col-lg-6">
+                <div class="internship-feed-card">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                    <div>
+                      <h4 class="section-heading mb-1" style="font-size: 24px;"><%= internship.title %></h4>
+                      <div class="small-muted"><%= internship.department || 'No department specified' %></div>
+                    </div>
+                    <span class="feed-pill"><%= internship.status %></span>
+                  </div>
+
+                  <div class="feed-meta">
+                    <span class="feed-pill"><%= internship.location || 'N/A' %></span>
+                    <span class="feed-pill"><%= internship.workMode || 'N/A' %></span>
+                    <span class="feed-pill"><%= internship.durationMonths || 'N/A' %> months</span>
+                  </div>
+
+                  <p class="mb-2"><strong>Stipend:</strong> ৳<%= internship.stipend || 0 %></p>
+                  <p class="mb-3"><strong>Positions:</strong> <%= internship.numberOfPositions || 1 %></p>
+
+                  <div class="dashboard-text-box mb-3">
+                    <%= internship.roleDescription ? internship.roleDescription.substring(0, 180) : 'No description' %>...
+                  </div>
+
+                  <div class="small-muted">
+                    Posted on <%= new Date(internship.createdAt).toDateString() %>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <a href="/company/internships/edit/<%= internship.id %>" class="nav-btn-blue">
+                        Edit
+                    </a>
+
+                  <% if (internship.status === 'ACTIVE') { %>
+                    <form action="/company/internships/close/<%= internship.id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="glass-btn border-0">Close</button>
+                    </form>
+                  <% } %>
+
+                  <form action="/company/internships/delete/<%= internship.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this internship?')">
+                     <button type="submit" class="glass-btn border-0">Delete</button>
+                  </form>
+                 </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

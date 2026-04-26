@@ -1,0 +1,10 @@
+<%- include('partials/header') %>
+<div class="container py-4">
+  <h1><%= internship.title %></h1>
+  <p><strong>Location:</strong> <%= internship.location || 'N/A' %></p>
+  <p><strong>Work Mode:</strong> <%= internship.workMode || 'N/A' %></p>
+  <p><strong>Skills:</strong> <%= internship.requiredSkills || 'N/A' %></p>
+  <p><%= internship.roleDescription || '' %></p>
+  <form method="POST" action="/company/internships/student/<%= internship.id %>/apply"><button class="btn btn-primary">Apply</button></form>
+</div>
+<%- include('partials/footer') %>

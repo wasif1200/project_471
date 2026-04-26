@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+<div class="container py-4">
+  <%- include('partials/alerts') %>
+  <h1>Student Registration</h1>
+  <form action="/student/register" method="POST" enctype="multipart/form-data" class="row g-3">
+    <div class="col-md-6"><label class="form-label">First Name</label><input class="form-control" name="firstName" required></div>
+    <div class="col-md-6"><label class="form-label">Last Name</label><input class="form-control" name="lastName" required></div>
+    <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" type="email" name="email" required></div>
+    <div class="col-md-3"><label class="form-label">Password</label><input class="form-control" type="password" name="password" required></div>
+    <div class="col-md-3"><label class="form-label">Confirm Password</label><input class="form-control" type="password" name="confirmPassword" required></div>
+    <div class="col-md-6"><label class="form-label">University</label><input class="form-control" name="universityName"></div>
+    <div class="col-md-6"><label class="form-label">Department</label><input class="form-control" name="department"></div>
+    <div class="col-md-6"><label class="form-label">Skills (comma separated)</label><input class="form-control" name="skills"></div>
+    <div class="col-md-6"><label class="form-label">Resume</label><input class="form-control" type="file" name="resume"></div>
+    <div class="col-12"><button class="btn btn-primary">Register</button></div>
+  </form>
+</div>
+<%- include('partials/footer') %>

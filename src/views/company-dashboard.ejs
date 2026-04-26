@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home"><span>⌂</span></a>
+  </div>
+
+  <div class="portal-brand-left">Industry<br>Portal</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="portal-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Company Dashboard</h1>
+        <p class="portal-main-subtitle">
+          Manage your company profile and internship postings in one place.
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <div class="dashboard-top-bar mb-4">
+          <div>
+            <h2 class="join-title mb-1">Welcome, <%= company.companyName %></h2>
+            <p class="join-subtitle mb-0"><%= company.email %></p>
+          </div>
+
+          <div class="dashboard-top-actions">
+            <a href="/company/internships/create" class="nav-btn-blue">Post Internship</a>
+            <a href="/company/internships/manage" class="glass-btn">Manage Posts</a>
+            <a href="/company/logout" class="glass-btn">Logout</a>
+            <a href="/applications/company" class="glass-btn">Applications Received</a>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100">
+              <h4 class="section-heading mb-3">Company Info</h4>
+
+              <div class="dashboard-info-list">
+                <div class="info-row">
+                  <span class="info-label">Company Name</span>
+                  <span class="info-value"><%= company.companyName || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Email</span>
+                  <span class="info-value"><%= company.email || 'N/A' %></span>
+                </div>
+
+                <div class="info-row">
+                  <span class="info-label">Total Posts</span>
+                  <span class="info-value"><%= internships.length %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100 text-center">
+               <h4 class="section-heading mb-3">Applications</h4>
+               <p>View and manage student applications for your internships.</p>
+               <a href="/applications/company" class="nav-btn-blue">
+                  View Applications
+               </a>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="section-glass dashboard-card h-100">
+              <h4 class="section-heading mb-3">Recent Internship Posts</h4>
+
+              <% if (internships.length === 0) { %>
+                <div class="dashboard-text-box">No internships posted yet.</div>
+              <% } else { %>
+                <div class="dashboard-info-list">
+                  <% internships.slice(0, 4).forEach(internship => { %>
+                    <div class="info-row">
+                      <span class="info-label"><%= internship.title %></span>
+                      <span class="info-value"><%= internship.status %></span>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

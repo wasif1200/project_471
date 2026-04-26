@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{title}} | Internship & Skill Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="/member4/css/app.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg app-navbar sticky-top">
+    <div class="container-fluid app-container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/member4">
+        <span class="brand-mark"><i class="bi bi-stars"></i></span>
+        <span>Internship<span class="brand-accent">Skill</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-pills gap-lg-1">
+          <li class="nav-item"><a class="nav-link {{#if (eq active 'home')}}active{{/if}}" href="/member4">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link {{#if (eq active 'skill-gap')}}active{{/if}}" href="/member4/skill-gap">Skill Gap</a></li>
+          <li class="nav-item"><a class="nav-link {{#if (eq active 'matching')}}active{{/if}}" href="/member4/matching">Matching</a></li>
+          <li class="nav-item"><a class="nav-link {{#if (eq active 'skill-suggestions')}}active{{/if}}" href="/member4/skill-suggestions">Suggestions</a></li>
+          <li class="nav-item"><a class="nav-link {{#if (eq active 'chatbot')}}active{{/if}}" href="/member4/chatbot">Chatbot</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="app-main">
+    {{{body}}}
+  </main>
+
+  <footer class="app-footer">
+    <div class="container-fluid app-container d-flex flex-wrap justify-content-between gap-2">
+      <span>Unified Internship & Skill Analyzer</span>
+      <span>Express + Handlebars + Prisma + SQLite</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</body>
+</html>

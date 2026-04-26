@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skill Demand Analytics · InternshipIQ</title>
+  <link rel="stylesheet" href="/member3/member3-theme.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ── CSS VARIABLES ─────────────────────────────────────────────── */
+    :root {
+      --bg:           #0d0f18;
+      --bg2:          #13162199;
+      --surface:      #161929;
+      --surface2:     #1e2235;
+      --border:       #ffffff0d;
+      --border2:      #ffffff1a;
+      --accent:       #6c63ff;
+      --accent2:      #a78bfa;
+      --teal:         #2dd4bf;
+      --amber:        #fbbf24;
+      --rose:         #fb7185;
+      --green:        #34d399;
+      --text:         #e2e8f0;
+      --muted:        #94a3b8;
+      --faint:        #475569;
+      --font-head:    'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --radius:       14px;
+      --shadow:       0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    /* ── RESET & BASE ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NOISE OVERLAY ─────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────── */
+    .wrapper { max-width: 1280px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ── TOPNAV ────────────────────────────────────────────────────── */
+    .topnav {
+      border-bottom: 1px solid var(--border2);
+      background: #0d0f18e0;
+      backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topnav .wrapper {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 14px; padding-bottom: 14px;
+    }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--teal) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .nav-badge {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      color: var(--muted); text-transform: uppercase;
+      border: 1px solid var(--border2); border-radius: 100px;
+      padding: 4px 12px;
+    }
+
+    /* ── HERO HEADER ───────────────────────────────────────────────── */
+    .hero {
+      padding: 56px 0 40px;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -80px; right: -120px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, #6c63ff18 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent2);
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 24px; height: 2px;
+      background: var(--accent2); border-radius: 2px;
+    }
+    .hero h1 {
+      font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; line-height: 1.1; letter-spacing: -1px;
+      color: #fff; margin-bottom: 14px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent2), var(--teal));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--muted); max-width: 520px; font-size: 15px; }
+
+    /* ── STAT CARDS ROW ────────────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin: 32px 0;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .stat-card.purple::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .stat-card.teal::before   { background: linear-gradient(90deg, var(--teal), #67e8f9); }
+    .stat-card.amber::before  { background: linear-gradient(90deg, var(--amber), #f97316); }
+    .stat-card.rose::before   { background: linear-gradient(90deg, var(--rose), #f43f5e); }
+    .stat-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+    .stat-value {
+      font-family: var(--font-head); font-size: 2rem; font-weight: 800;
+      color: #fff; line-height: 1;
+    }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* ── SECTION TITLES ────────────────────────────────────────────── */
+    .section-title {
+      font-family: var(--font-head); font-size: 1.1rem; font-weight: 700;
+      color: #fff; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent2);
+    }
+
+    /* ── GRID LAYOUT ───────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    /* ── CARD ──────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .card-full { grid-column: 1 / -1; }
+
+    /* ── CHART WRAPPERS ────────────────────────────────────────────── */
+    .chart-wrap { position: relative; height: 280px; }
+    .chart-wrap-tall { position: relative; height: 360px; }
+
+    /* ── SKILL BAR TABLE ───────────────────────────────────────────── */
+    .skill-list { display: flex; flex-direction: column; gap: 12px; }
+    .skill-row {
+      display: grid;
+      grid-template-columns: 32px 1fr 80px 100px;
+      align-items: center; gap: 12px;
+    }
+    .rank-num {
+      font-family: var(--font-head); font-size: 11px; font-weight: 700;
+      color: var(--faint); text-align: center;
+    }
+    .skill-info { min-width: 0; }
+    .skill-name { font-weight: 600; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .skill-cat {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+      padding: 2px 7px; border-radius: 100px; display: inline-block; margin-top: 3px;
+    }
+    .cat-Frontend   { background: #6c63ff22; color: var(--accent2); }
+    .cat-Backend    { background: #2dd4bf22; color: var(--teal); }
+    .cat-DevOps     { background: #fbbf2422; color: var(--amber); }
+    .cat-Data       { background: #34d39922; color: var(--green); }
+    .cat-SoftSkills { background: #fb718522; color: var(--rose); }
+    .cat-Soft       { background: #fb718522; color: var(--rose); }
+    .demand-count {
+      font-family: var(--font-head); font-weight: 700; font-size: 1rem;
+      color: #fff; text-align: right;
+    }
+    .demand-count span { font-size: 11px; font-weight: 400; color: var(--muted); }
+    .demand-bar-wrap { width: 100px; }
+    .demand-bar-bg {
+      height: 6px; background: var(--surface2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .demand-bar-fill {
+      height: 100%; border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.8s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── FILTER ROW ────────────────────────────────────────────────── */
+    .filter-row {
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .filter-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .pill-btn {
+      padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 600;
+      font-family: var(--font-body); cursor: pointer; transition: all 0.15s;
+      border: 1px solid var(--border2); background: transparent; color: var(--muted);
+    }
+    .pill-btn:hover  { border-color: var(--accent2); color: var(--accent2); }
+    .pill-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── INTERNSHIP SELECTOR ───────────────────────────────────────── */
+    .select-styled {
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); border-radius: 10px;
+      padding: 10px 16px; font-family: var(--font-body); font-size: 14px;
+      outline: none; cursor: pointer; min-width: 280px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+      transition: border-color 0.2s;
+    }
+    .select-styled:focus { border-color: var(--accent); }
+
+    /* ── INTERNSHIP SKILL TABLE ────────────────────────────────────── */
+    .itable { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .itable th {
+      text-align: left; padding: 10px 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--faint); border-bottom: 1px solid var(--border);
+    }
+    .itable td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .itable tr:last-child td { border-bottom: none; }
+    .itable tr:hover td { background: var(--surface2); }
+    .level-pip { display: flex; gap: 3px; }
+    .pip {
+      width: 12px; height: 12px; border-radius: 3px;
+      background: var(--surface2); border: 1px solid var(--border2);
+    }
+    .pip.filled { background: var(--accent2); border-color: var(--accent2); }
+
+    /* ── INSIGHT CARDS ─────────────────────────────────────────────── */
+    .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .insight-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+      border-left: 3px solid var(--accent2);
+      transition: transform 0.15s;
+    }
+    .insight-card:hover { transform: translateY(-2px); }
+    .insight-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .insight-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .insight-text  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── LOADING OVERLAY ───────────────────────────────────────────── */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg); z-index: 999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; transition: opacity 0.4s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 3px solid var(--border2);
+      border-top-color: var(--accent2);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: var(--font-head); font-size: 14px;
+      color: var(--muted); letter-spacing: 1px;
+    }
+
+    /* ── FADE IN ───────────────────────────────────────────────────── */
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+    /* ── SCROLLBAR ─────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 3px; }
+
+    /* ── FOOTER ────────────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0; margin-top: 60px;
+      text-align: center;
+      font-size: 12px; color: var(--faint);
+    }
+    .footer strong { color: var(--muted); }
+
+    /* ── EMPTY STATE ───────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 40px 20px;
+      color: var(--muted); font-size: 14px;
+    }
+    .empty-state .icon { font-size: 2rem; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading analytics…</div>
+</div>
+
+<!-- Top Nav -->
+<nav class="topnav">
+  <div class="wrapper">
+    <div class="logo">InternshipIQ</div>
+    
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="wrapper">
+  <div class="hero fade-in">
+    <div class="hero">Real-time Internship Intelligence</div>
+    <h1>Skill Demand <span>Analytics Dashboard</span></h1>
+    <p>Discover which skills employers demand most, ranked by frequency and required proficiency across all active internship postings.</p>
+  </div>
+
+  <!-- Overview stat cards -->
+  <div class="stats-row fade-in" id="statsRow">
+    <div class="stat-card purple">
+      <div class="stat-label">Internship Postings</div>
+      <div class="stat-value" id="stat-internships">—</div>
+      <div class="stat-sub">active listings analyzed</div>
+    </div>
+    <div class="stat-card teal">
+      <div class="stat-label">Skills Tracked</div>
+      <div class="stat-value" id="stat-skills">—</div>
+      <div class="stat-sub">across all categories</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-label">Top Demanded Skill</div>
+      <div class="stat-value" id="stat-topskill" style="font-size:1.3rem">—</div>
+      <div class="stat-sub" id="stat-topskill-sub">—</div>
+    </div>
+    <div class="stat-card rose">
+      <div class="stat-label">Students Registered</div>
+      <div class="stat-value" id="stat-students">—</div>
+      <div class="stat-sub">in the system</div>
+    </div>
+  </div>
+
+  <!-- ── ROW 1: Top Skills Ranking + Category Doughnut ──────────────── -->
+  <div class="grid-2" style="margin-bottom:20px">
+
+    <!-- Top Skills Bar Chart -->
+    <div class="card fade-in">
+      <div class="section-title"><span class="dot"></span>Most In-Demand Skills</div>
+      <!-- Category filter pills -->
+      <div class="filter-row" id="categoryFilter">
+        <span class="filter-label">Filter:</span>
+        <button class="pill-btn active" data-cat="">All</button>
+        <button class="pill-btn" data-cat="Frontend">Frontend</button>
+        <button class="pill-btn" data-cat="Backend">Backend</button>
+        <button class="pill-btn" data-cat="DevOps">DevOps</button>
+        <button class="pill-btn" data-cat="Data">Data</button>
+        <button class="pill-btn" data-cat="Soft Skills">Soft Skills</button>
+      </div>
+      <div class="chart-wrap-tall">
+        <canvas id="topSkillsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Demand by Category Doughnut -->
+    <div class="card fade-in">
+      <div class="section-title"><span class="dot" style="background:var(--teal)"></span>Demand by Category</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="categoryChart"></canvas>
+      </div>
+      <div id="categoryLegend" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center"></div>
+    </div>
+  </div>
+
+  <!-- ── ROW 2: Skill Ranking List ──────────────────────────────────── -->
+  <div class="card fade-in" style="margin-bottom:20px">
+    <div class="section-title"><span class="dot" style="background:var(--amber)"></span>Skill Demand Rankings</div>
+    <div class="skill-list" id="skillList">
+      <div class="empty-state"><div class="icon">⏳</div>Loading rankings…</div>
+    </div>
+  </div>
+
+  <!-- ── ROW 3: Trending Skills Radar + Avg Level Chart ──────────────── -->
+  <div class="grid-2" style="margin-bottom:20px">
+
+    <!-- Trending Radar -->
+    <div class="card fade-in">
+      <div class="section-title"><span class="dot" style="background:var(--rose)"></span>Trending Skills · Proficiency Radar</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Skills ranked by combined demand × required level score</p>
+      <div class="chart-wrap">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Average Required Level Horizontal Bar -->
+    <div class="card fade-in">
+      <div class="section-title"><span class="dot" style="background:var(--green)"></span>Average Required Proficiency</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Average skill level (1–5) required across all postings</p>
+      <div class="chart-wrap">
+        <canvas id="levelChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROW 4: Per-Internship Skill Breakdown ──────────────────────── -->
+  <div class="card fade-in" style="margin-bottom:20px">
+    <div class="section-title"><span class="dot" style="background:var(--accent2)"></span>Per-Internship Skill Requirements</div>
+    <div class="filter-row">
+      <span class="filter-label">Select Posting:</span>
+      <select class="select-styled" id="internshipSelect">
+        <option value="">— Choose an internship —</option>
+      </select>
+    </div>
+    <div id="internshipSkillsContainer">
+      <div class="empty-state"><div class="icon">🎯</div>Select an internship posting to view its skill requirements</div>
+    </div>
+  </div>
+
+  <!-- ── ROW 5: Insights ────────────────────────────────────────────── -->
+  <div class="card fade-in" style="margin-bottom:40px">
+    <div class="section-title"><span class="dot" style="background:var(--green)"></span>Key Insights &amp; Recommendations for Students</div>
+    <div class="insight-grid" id="insightGrid">
+      <div class="empty-state"><div class="icon">⏳</div>Generating insights…</div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   MODULE 2 (MEMBER 3): SKILL DEMAND ANALYTICS — FRONTEND JS
+   ═══════════════════════════════════════════════════════════════ */
+
+const API = '/member3/api/analytics';
+
+// ── Chart.js global defaults ────────────────────────────────────
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.borderColor = '#ffffff0d';
+
+// ── Chart instances (kept for destroy/redraw) ───────────────────
+let topChart = null, catChart = null, radarChart = null, levelChart = null;
+
+// ── Palette ─────────────────────────────────────────────────────
+const PALETTE = ['#6c63ff','#2dd4bf','#fbbf24','#fb7185','#34d399','#a78bfa','#67e8f9','#f97316'];
+const CAT_COLORS = {
+  Frontend:     '#6c63ff',
+  Backend:      '#2dd4bf',
+  DevOps:       '#fbbf24',
+  Data:         '#34d399',
+  'Soft Skills':'#fb7185',
+};
+
+// ── Utility: pips HTML ──────────────────────────────────────────
+function pipsHtml(level, max = 5) {
+  return Array.from({length: max}, (_, i) =>
+    `<div class="pip ${i < level ? 'filled' : ''}"></div>`
+  ).join('');
+}
+
+// ── Load overview stats ──────────────────────────────────────────
+async function loadOverview() {
+  const res = await fetch(`${API}/overview`);
+  const { overview } = await res.json();
+  document.getElementById('stat-internships').textContent = overview.totalInternships;
+  document.getElementById('stat-skills').textContent      = overview.totalSkills;
+  document.getElementById('stat-students').textContent    = overview.totalStudents;
+  if (overview.topSkill) {
+    document.getElementById('stat-topskill').textContent     = overview.topSkill.name;
+    document.getElementById('stat-topskill-sub').textContent = `${overview.topSkill.count} postings · ${overview.topSkill.category}`;
+  }
+
+  // Category doughnut
+  const catData = overview.categoryBreakdown;
+  buildCategoryChart(catData);
+}
+
+// ── Build top-skills bar chart ───────────────────────────────────
+async function loadTopSkills(category = '') {
+  const url = `${API}/top-skills?limit=12${category ? '&category=' + encodeURIComponent(category) : ''}`;
+  const res  = await fetch(url);
+  const { skills } = await res.json();
+
+  // ── Chart ──
+  if (topChart) topChart.destroy();
+  const ctx = document.getElementById('topSkillsChart').getContext('2d');
+  topChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: skills.map(s => s.name),
+      datasets: [{
+        label: 'Demand Count (internship postings)',
+        data:  skills.map(s => s.demandCount),
+        backgroundColor: skills.map((s, i) => PALETTE[i % PALETTE.length] + 'cc'),
+        borderColor:     skills.map((s, i) => PALETTE[i % PALETTE.length]),
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.raw} posting${ctx.raw !== 1 ? 's' : ''} (${skills[ctx.dataIndex].demandPercentage}% of listings)`,
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#ffffff08' }, ticks: { color: '#94a3b8' }, beginAtZero: true },
+        y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: '600' } } },
+      },
+    },
+  });
+
+  // ── Ranked list ──
+  const maxCount = skills[0]?.demandCount || 1;
+  const listEl   = document.getElementById('skillList');
+  if (!skills.length) {
+    listEl.innerHTML = '<div class="empty-state"><div class="icon">🔍</div>No skills found for this category</div>';
+    return;
+  }
+  listEl.innerHTML = skills.map((s, i) => `
+    <div class="skill-row">
+      <div class="rank-num">#${i + 1}</div>
+      <div class="skill-info">
+        <div class="skill-name">${s.name}</div>
+        <span class="skill-cat cat-${s.category.replace(' ','')}">${s.category}</span>
+      </div>
+      <div class="demand-count">${s.demandCount}<br><span>/ ${s.demandPercentage}%</span></div>
+      <div class="demand-bar-wrap">
+        <div class="demand-bar-bg">
+          <div class="demand-bar-fill" style="width:${(s.demandCount / maxCount * 100).toFixed(1)}%"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Build category doughnut ──────────────────────────────────────
+function buildCategoryChart(catData) {
+  if (catChart) catChart.destroy();
+  const labels = Object.keys(catData);
+  const values = Object.values(catData);
+  const colors = labels.map(l => CAT_COLORS[l] || '#6c63ff');
+
+  const ctx = document.getElementById('categoryChart').getContext('2d');
+  catChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: colors.map(c => c + 'cc'), borderColor: colors, borderWidth: 2, hoverOffset: 8 }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} requirements` } },
+      },
+    },
+  });
+
+  // Custom legend
+  const legend = document.getElementById('categoryLegend');
+  legend.innerHTML = labels.map((l, i) => `
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:${colors[i]}">
+      <div style="width:10px;height:10px;border-radius:2px;background:${colors[i]}"></div>
+      ${l} <span style="color:#475569;font-weight:400">(${values[i]})</span>
+    </div>
+  `).join('');
+}
+
+// ── Radar: trending skills ───────────────────────────────────────
+async function loadTrending() {
+  const res  = await fetch(`${API}/trending`);
+  const { trending } = await res.json();
+  const top8 = trending.slice(0, 8);
+
+  if (radarChart) radarChart.destroy();
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: top8.map(s => s.name),
+      datasets: [{
+        label: 'Trend Score',
+        data:  top8.map(s => s.trendScore),
+        backgroundColor: 'rgba(108,99,255,0.15)',
+        borderColor:     '#6c63ff',
+        borderWidth: 2,
+        pointBackgroundColor: '#6c63ff',
+        pointRadius: 4,
+      }, {
+        label: 'Avg Required Level',
+        data:  top8.map(s => s.avgRequiredLevel),
+        backgroundColor: 'rgba(45,212,191,0.1)',
+        borderColor:     '#2dd4bf',
+        borderWidth: 2,
+        pointBackgroundColor: '#2dd4bf',
+        pointRadius: 4,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        r: {
+          grid:       { color: '#ffffff10' },
+          angleLines: { color: '#ffffff10' },
+          ticks:      { backdropColor: 'transparent', color: '#94a3b8', font: { size: 10 } },
+          pointLabels:{ color: '#e2e8f0', font: { size: 11, weight: '600' } },
+        }
+      },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 12 } } } },
+    },
+  });
+}
+
+// ── Avg Level horizontal bar ─────────────────────────────────────
+async function loadLevelChart() {
+  const res  = await fetch(`${API}/top-skills?limit=10`);
+  const { skills } = await res.json();
+
+  if (levelChart) levelChart.destroy();
+  const ctx = document.getElementById('levelChart').getContext('2d');
+  levelChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: skills.map(s => s.name),
+      datasets: [{
+        label: 'Avg Required Level',
+        data:  skills.map(s => s.avgRequiredLevel),
+        backgroundColor: skills.map((_, i) => PALETTE[i % PALETTE.length] + 'bb'),
+        borderColor:     skills.map((_, i) => PALETTE[i % PALETTE.length]),
+        borderWidth: 1.5, borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` Required Level: ${ctx.raw} / 5` } },
+      },
+      scales: {
+        x: { grid: { color: '#ffffff08' }, ticks: { color: '#94a3b8', maxRotation: 40, font: { size: 10 } } },
+        y: { min: 0, max: 5, grid: { color: '#ffffff08' }, ticks: { color: '#94a3b8', stepSize: 1 } },
+      },
+    },
+  });
+}
+
+// ── Load internship list into select ────────────────────────────
+async function loadInternships() {
+  const res  = await fetch(`${API}/all-internships`);
+  const { internships } = await res.json();
+  const sel = document.getElementById('internshipSelect');
+  internships.forEach(i => {
+    const opt = document.createElement('option');
+    opt.value       = i.id;
+    opt.textContent = `${i.company} · ${i.title} (${i.type})`;
+    sel.appendChild(opt);
+  });
+}
+
+// ── Per-internship skill table ───────────────────────────────────
+async function loadInternshipSkills(id) {
+  const container = document.getElementById('internshipSkillsContainer');
+  if (!id) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">🎯</div>Select an internship posting to view its skill requirements</div>';
+    return;
+  }
+  container.innerHTML = '<div class="empty-state"><div class="icon">⏳</div>Loading…</div>';
+
+  const res  = await fetch(`${API}/internship-skills/${id}`);
+  const data = await res.json();
+  if (!data.success) return;
+
+  const { internship, skills } = data;
+  container.innerHTML = `
+    <div style="margin-bottom:16px;padding:14px 18px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff">${internship.title}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">${internship.company} · ${internship.industry} · ${internship.location} · ${internship.type}</div>
+    </div>
+    <table class="itable">
+      <thead>
+        <tr>
+          <th>Skill</th>
+          <th>Category</th>
+          <th>Required Level</th>
+          <th>Proficiency</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${skills.map(s => `
+          <tr>
+            <td style="font-weight:600;color:var(--text)">${s.name}</td>
+            <td><span class="skill-cat cat-${s.category.replace(' ','')}">${s.category}</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:700;color:#fff">${s.requiredLevel} / 5</td>
+            <td><div class="level-pip">${pipsHtml(s.requiredLevel)}</div></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ── Insights ────────────────────────────────────────────────────
+async function buildInsights() {
+  const res  = await fetch(`${API}/top-skills?limit=5`);
+  const { skills, totalInternships } = await res.json();
+
+  const insights = [
+    {
+      icon: '🔥',
+      title: `#1 In Demand: ${skills[0]?.name || '—'}`,
+      text: `Appears in ${skills[0]?.demandCount} of ${totalInternships} postings (${skills[0]?.demandPercentage}%). Master this skill first.`,
+    },
+    {
+      icon: '📊',
+      title: 'Diversify Your Skill Set',
+      text: `Top 5 skills span multiple categories. A well-rounded profile increases your match rate across postings.`,
+    },
+    {
+      icon: '⚙️',
+      title: `Backend & Git Are Universal`,
+      text: `SQL, REST APIs, and Git & GitHub appear across almost every posting. These are non-negotiable foundations.`,
+    },
+    {
+      icon: '💡',
+      title: 'Level Up, Not Just Add Skills',
+      text: `Many postings require Level 4–5. Having a skill at Level 2 is still a weak match. Depth beats breadth.`,
+    },
+    {
+      icon: '🚀',
+      title: `${skills[1]?.name || 'React.js'} is Growing`,
+      text: `Frontend frameworks dominate remote internships. Build real projects to demonstrate proficiency.`,
+    },
+    {
+      icon: '🗺️',
+      title: 'Soft Skills Still Count',
+      text: `Communication and Problem Solving appear in multiple postings. Don't overlook non-technical skills.`,
+    },
+  ];
+
+  document.getElementById('insightGrid').innerHTML = insights.map(ins => `
+    <div class="insight-card">
+      <div class="insight-icon">${ins.icon}</div>
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-text">${ins.text}</div>
+    </div>
+  `).join('');
+}
+
+// ── Category filter pills ────────────────────────────────────────
+document.getElementById('categoryFilter').addEventListener('click', e => {
+  const btn = e.target.closest('.pill-btn');
+  if (!btn) return;
+  document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadTopSkills(btn.dataset.cat);
+});
+
+// ── Internship select change ─────────────────────────────────────
+document.getElementById('internshipSelect').addEventListener('change', e => {
+  loadInternshipSkills(e.target.value);
+});
+
+// ── Bootstrap all data ───────────────────────────────────────────
+async function init() {
+  try {
+    await Promise.all([
+      loadOverview(),
+      loadTopSkills(),
+      loadTrending(),
+      loadLevelChart(),
+      loadInternships(),
+      buildInsights(),
+    ]);
+  } catch (err) {
+    console.error('Error loading analytics:', err);
+  } finally {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('hidden');
+    setTimeout(() => overlay.style.display = 'none', 400);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

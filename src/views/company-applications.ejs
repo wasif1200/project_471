@@ -1,0 +1,255 @@
+<%- include("partials/header") %>
+
+<div class="container mt-4 company-applications-page">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+      <h2 class="gradient-page-title mb-1">Applications Received</h2>
+      <p class="text-light-emphasis mb-0">Review, schedule interviews, and update application status.</p>
+    </div>
+
+    <div class="applications-toolbar">
+      <input
+        type="text"
+        id="applicationSearch"
+        class="form-control glass-input"
+        placeholder="Search student, email, internship..."
+      >
+
+      <select id="statusFilter" class="form-select glass-input">
+        <option value="ALL">All Statuses</option>
+        <option value="APPLIED">Applied</option>
+        <option value="REVIEWED">Reviewed</option>
+        <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+  </div>
+
+  <% if (applications.length === 0) { %>
+    <div class="alert alert-info shadow-sm">
+      No applications received yet.
+    </div>
+  <% } else { %>
+    <div class="applications-table-shell">
+      <div class="table-responsive">
+        <table class="table applications-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Internship</th>
+              <th>Profile</th>
+              <th>Current Status</th>
+              <th>Interview Info</th>
+              <th>Update Application</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+
+          <tbody id="applicationsTableBody">
+            <% applications.forEach(app => { %>
+              <tr
+                class="application-row"
+                data-status="<%= app.status %>"
+                data-search="<%= `${app.student.firstName} ${app.student.lastName} ${app.student.email} ${app.internship.title}`.toLowerCase() %>"
+              >
+                <td data-label="Student">
+                  <div class="fw-semibold text-dark">
+                    <%= app.student.firstName %> <%= app.student.lastName %>
+                  </div>
+                </td>
+
+                <td data-label="Email">
+                  <span class="text-break"><%= app.student.email %></span>
+                </td>
+
+                <td data-label="Internship">
+                     <span class="fw-semibold"><%= app.internship.title %></span>
+                </td>
+
+                <td data-label="Profile">
+                   <a href="/company/students/<%= app.student.id %>/profile"
+                      class="btn btn-sm btn-outline-primary">
+                     View Profile
+                   </a>
+                </td>
+
+                <td data-label="Current Status">
+                  <% if (app.status === "APPLIED") { %>
+                    <span class="status-pill status-applied">Applied</span>
+                  <% } else if (app.status === "REVIEWED") { %>
+                    <span class="status-pill status-reviewed">Reviewed</span>
+                  <% } else if (app.status === "INTERVIEW_SCHEDULED") { %>
+                    <span class="status-pill status-interview">Interview Scheduled</span>
+                  <% } else if (app.status === "REJECTED") { %>
+                    <span class="status-pill status-rejected">Rejected</span>
+                  <% } else { %>
+                    <span class="status-pill status-neutral"><%= app.status %></span>
+                  <% } %>
+                </td>
+
+                <td data-label="Interview Info" class="interview-info-cell">
+                  <% if (app.status === "INTERVIEW_SCHEDULED" && app.interviewDateTime) { %>
+                    <div class="interview-info-box">
+                      <div class="small mb-1">
+                        <strong>Type:</strong> <%= app.interviewType || "N/A" %>
+                      </div>
+
+                      <div class="small mb-1">
+                        <strong>Time:</strong>
+                        <%= new Date(app.interviewDateTime).toLocaleString() %>
+                      </div>
+
+                      <% if (app.interviewLocation) { %>
+                        <div class="small mb-1">
+                          <strong>Place:</strong> <%= app.interviewLocation %>
+                        </div>
+                      <% } %>
+
+                      <% if (app.interviewMeetLink) { %>
+                        <div class="small mb-1">
+                          <strong>Meet:</strong>
+                          <a href="<%= app.interviewMeetLink %>" target="_blank" class="table-link">Open Link</a>
+                        </div>
+                      <% } %>
+
+                      <% if (app.interviewNote) { %>
+                        <div class="small">
+                          <strong>Note:</strong> <%= app.interviewNote %>
+                        </div>
+                      <% } %>
+                    </div>
+                  <% } else { %>
+                    <span class="text-muted">No interview scheduled</span>
+                  <% } %>
+                </td>
+
+                <td data-label="Update Application" class="update-cell">
+                  <form action="/applications/company/update/<%= app.id %>" method="POST" class="update-form">
+                    <div class="mb-2">
+                      <select name="status" class="form-select form-select-sm glass-input status-select" required>
+                        <option value="">Select status</option>
+                        <option value="REVIEWED" <%= app.status === "REVIEWED" ? "selected" : "" %>>Reviewed</option>
+                        <option value="INTERVIEW_SCHEDULED" <%= app.status === "INTERVIEW_SCHEDULED" ? "selected" : "" %>>Interview Scheduled</option>
+                        <option value="REJECTED" <%= app.status === "REJECTED" ? "selected" : "" %>>Rejected</option>
+                      </select>
+                    </div>
+
+                    <div class="interview-fields">
+                      <div class="mb-2">
+                        <select name="interviewType" class="form-select form-select-sm glass-input">
+                          <option value="">Interview Type</option>
+                          <option value="ONLINE" <%= app.interviewType === "ONLINE" ? "selected" : "" %>>Online</option>
+                          <option value="OFFLINE" <%= app.interviewType === "OFFLINE" ? "selected" : "" %>>Offline</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-2">
+                        <input
+                          type="date"
+                          name="interviewDate"
+                          class="form-control form-control-sm glass-input"
+                          value="<%= app.interviewDateTime ? new Date(app.interviewDateTime).toISOString().split('T')[0] : '' %>"
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <input
+                          type="time"
+                          name="interviewTime"
+                          class="form-control form-control-sm glass-input"
+                          value="<%= app.interviewDateTime ? new Date(app.interviewDateTime).toTimeString().slice(0,5) : '' %>"
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <input
+                          type="text"
+                          name="interviewLocation"
+                          class="form-control form-control-sm glass-input"
+                          placeholder="Interview location"
+                          value="<%= app.interviewLocation || '' %>"
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <input
+                          type="url"
+                          name="interviewMeetLink"
+                          class="form-control form-control-sm glass-input"
+                          placeholder="Google Meet / Zoom link"
+                          value="<%= app.interviewMeetLink || '' %>"
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <textarea
+                          name="interviewNote"
+                          class="form-control form-control-sm glass-input"
+                          rows="2"
+                          placeholder="Additional note"
+                        ><%= app.interviewNote || '' %></textarea>
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn update-btn btn-sm w-100">
+                      Update
+                    </button>
+                  </form>
+                </td>
+
+                <td data-label="Last Updated">
+                  <span><%= new Date(app.updatedAt).toLocaleString() %></span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="noResultsMessage" class="alert alert-warning mt-3 d-none">
+      No applications match your search/filter.
+    </div>
+  <% } %>
+</div>
+
+<script>
+  (function () {
+    const searchInput = document.getElementById("applicationSearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const rows = Array.from(document.querySelectorAll(".application-row"));
+    const noResultsMessage = document.getElementById("noResultsMessage");
+
+    function filterRows() {
+      const searchValue = (searchInput?.value || "").trim().toLowerCase();
+      const statusValue = statusFilter?.value || "ALL";
+
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const rowStatus = row.dataset.status;
+        const rowSearch = row.dataset.search || "";
+
+        const statusMatch = statusValue === "ALL" || rowStatus === statusValue;
+        const searchMatch = !searchValue || rowSearch.includes(searchValue);
+
+        if (statusMatch && searchMatch) {
+          row.style.display = "";
+          visibleCount++;
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      if (noResultsMessage) {
+        noResultsMessage.classList.toggle("d-none", visibleCount !== 0);
+      }
+    }
+
+    if (searchInput) searchInput.addEventListener("input", filterRows);
+    if (statusFilter) statusFilter.addEventListener("change", filterRows);
+  })();
+</script>
+
+<%- include("partials/footer") %>

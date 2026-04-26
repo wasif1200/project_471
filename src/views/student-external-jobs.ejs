@@ -1,0 +1,8 @@
+<%- include('partials/header') %>
+<div class="container py-4">
+  <h1>External Jobs</h1>
+  <% if (typeof jobs !== 'undefined' && jobs.length) { %>
+    <div class="list-group"><% jobs.forEach(job => { %><div class="list-group-item"><h5><%= job.title || job.role || 'Job' %></h5><p><%= job.company || job.companyName || '' %></p></div><% }) %></div>
+  <% } else { %><p>No external jobs found.</p><% } %>
+</div>
+<%- include('partials/footer') %>

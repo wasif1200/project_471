@@ -1,0 +1,128 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home"><span>⌂</span></a>
+  </div>
+
+  <div class="portal-brand-left">Industry<br>Portal</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="portal-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Post Internship</h1>
+        <p class="portal-main-subtitle">
+          Provide complete internship information so students can discover the right opportunity.
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <form action="/company/internships/create" method="POST">
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Internship Details</h4>
+            <p class="join-subtitle mb-4">Provide comprehensive details about the opportunity</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">Role Title</label>
+                <input type="text" name="title" class="form-control custom-input" placeholder="e.g. Software Development Intern" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Department</label>
+                <input type="text" name="department" class="form-control custom-input" placeholder="e.g. Engineering, Marketing, HR">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Location</label>
+                <input type="text" name="location" class="form-control custom-input" placeholder="e.g. Dhaka">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Work Mode</label>
+                <input type="text" name="workMode" class="form-control custom-input" placeholder="Remote / Hybrid / Onsite">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Duration (months)</label>
+                <input type="number" name="durationMonths" class="form-control custom-input" placeholder="e.g. 3">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Monthly Stipend</label>
+                <input type="number" step="0.01" name="stipend" class="form-control custom-input" placeholder="e.g. 15000">
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Role Description</label>
+                <textarea name="roleDescription" class="form-control custom-textarea" placeholder="Describe the internship role, responsibilities, and what the intern will learn" required></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Learning Outcomes</label>
+                <textarea name="learningOutcomes" class="form-control custom-textarea" placeholder="What skills and knowledge will the intern gain?"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Requirements</h4>
+            <p class="join-subtitle mb-4">Define the skills and academic expectations</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">Number of Positions</label>
+                <input type="number" name="numberOfPositions" class="form-control custom-input" value="1">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Required Skills</label>
+                <input type="text" name="requiredSkills" class="form-control custom-input" placeholder="e.g. JavaScript, Node.js, Communication">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Minimum Degree Level</label>
+                <input type="text" name="minimumDegreeLevel" class="form-control custom-input" placeholder="e.g. Bachelor">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Preferred Field of Study</label>
+                <input type="text" name="preferredFieldOfStudy" class="form-control custom-input" placeholder="e.g. CSE, BBA, EEE">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Minimum GPA / Percentage</label>
+                <input type="text" name="minimumGpaPercentage" class="form-control custom-input" placeholder="e.g. 3.20 CGPA or 70%">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Graduation Year Range</label>
+                <input type="text" name="graduationYearRange" class="form-control custom-input" placeholder="e.g. 2024-2027">
+              </div>
+              <div class="mb-3">
+                 <label class="form-label">Application Deadline</label>
+                 <input type="date" name="applicationDeadline" class="form-control">
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Additional Preferences</label>
+                <textarea name="additionalPreferences" class="form-control custom-textarea" placeholder="Additional requirements, notes, or preferences"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-action-between mt-4">
+            <a href="/company/dashboard" class="glass-btn">Back to Dashboard</a>
+            <button type="submit" class="nav-btn-blue border-0">Post Internship</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

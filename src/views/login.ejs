@@ -1,0 +1,78 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home">
+      <span>⌂</span>
+    </a>
+  </div>
+
+  <div class="portal-brand-top">FutureForge</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="auth-center-wrap">
+      <div class="auth-card-custom">
+
+        <div class="text-center mb-3">
+          <h2 class="auth-title">
+            <span class="me-2">🎓</span> Student Login
+          </h2>
+          <p class="auth-subtitle">
+            Access your student dashboard and internship applications
+          </p>
+        </div>
+
+        <form action="/student/login" method="POST">
+          <div class="mb-4">
+            <label class="custom-label">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              class="form-control custom-input"
+              placeholder="Enter email"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label class="custom-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control custom-input"
+              placeholder="Enter your password"
+              required
+            >
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="glass-btn auth-main-btn">Sign In</button>
+          </div>
+        </form>
+
+        <div class="auth-links text-center mt-2">
+          <a href="#" class="small-link">Forgot your password?</a>
+        </div>
+
+        <hr class="auth-divider">
+
+        <div class="text-center mb-3">
+          <p class="mb-0 auth-small-text">Don't have an account?</p>
+        </div>
+
+        <div class="text-center">
+          <a href="/student/register" class="glass-btn auth-secondary-btn">
+            Register as Student
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

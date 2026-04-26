@@ -1,0 +1,142 @@
+<%- include("partials/header") %>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">Student Profile</h2>
+      <p class="text-muted mb-0">
+        Profile details visible to company after application submission
+      </p>
+    </div>
+
+    <a href="/applications/company" class="btn btn-outline-secondary">
+      Back to Applications
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Personal Information</h4>
+
+          <p><strong>Name:</strong> <%= student.firstName %> <%= student.lastName %></p>
+          <p><strong>Email:</strong> <%= student.email %></p>
+          <p><strong>Phone:</strong> <%= student.phone || "N/A" %></p>
+          <p><strong>Country:</strong> <%= student.country || "N/A" %></p>
+          <p><strong>Gender:</strong> <%= student.gender || "N/A" %></p>
+          <p>
+            <strong>Date of Birth:</strong>
+            <%= student.dateOfBirth ? new Date(student.dateOfBirth).toDateString() : "N/A" %>
+          </p>
+
+          <p>
+            <strong>Resume:</strong>
+            <% if (student.resume) { %>
+              <a href="<%= student.resume %>" target="_blank">View Resume</a>
+            <% } else { %>
+              N/A
+            <% } %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Academic Information</h4>
+
+          <p><strong>University:</strong> <%= student.universityName || "N/A" %></p>
+          <p><strong>Degree:</strong> <%= student.degree || "N/A" %></p>
+          <p><strong>Department:</strong> <%= student.department || "N/A" %></p>
+          <p><strong>Semester:</strong> <%= student.semester || "N/A" %></p>
+          <p><strong>CGPA:</strong> <%= student.cgpa || "N/A" %></p>
+          <p><strong>Graduation Year:</strong> <%= student.graduationYear || "N/A" %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Skills & Experience</h4>
+
+          <p><strong>Skills:</strong></p>
+          <% if (student.skills && student.skills.length > 0) { %>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <% student.skills.forEach(skill => { %>
+                <span class="badge bg-primary"><%= skill.name %></span>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p>N/A</p>
+          <% } %>
+
+          <p><strong>Experience:</strong></p>
+          <div class="border rounded p-3 bg-light">
+            <%= student.experience || "N/A" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Preferences</h4>
+
+          <p><strong>Location Preferences:</strong></p>
+          <div class="border rounded p-3 bg-light mb-3">
+            <%= student.locationPreferences || "N/A" %>
+          </div>
+
+          <p><strong>Sector Preferences:</strong></p>
+          <div class="border rounded p-3 bg-light mb-3">
+            <%= student.sectorPreferences || "N/A" %>
+          </div>
+
+          <p><strong>Additional Information:</strong></p>
+          <div class="border rounded p-3 bg-light">
+            <%= student.additionalInformation || "N/A" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="mb-3">Applications to Your Company</h4>
+
+          <% if (studentApplicationsToThisCompany.length === 0) { %>
+            <p class="text-muted mb-0">No applications found.</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Internship</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% studentApplicationsToThisCompany.forEach(app => { %>
+                    <tr>
+                      <td><%= app.internship.title %></td>
+                      <td><%= app.status %></td>
+                      <td><%= new Date(app.updatedAt).toLocaleString() %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer") %>

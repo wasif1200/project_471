@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Viewer</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="topbar">
+      <div class="logo">✦ Student Portal</div>
+
+      <div class="nav-pill">
+        <a href="/">HOME</a>
+        <a href="/student/internships">EXPLORE INTERNSHIPS</a>
+        <a href="/applications/my">MY APPLICATIONS</a>
+        <a href="/student/dashboard">PROFILE</a>
+      </div>
+    </div>
+
+    <div class="glass-card profile-card" style="margin-bottom: 22px;">
+      <div class="profile-body">
+        <p class="profile-text"><strong>Uploaded by:</strong> <%= certificate.studentName %></p>
+        <p class="profile-text"><strong>Company:</strong> <%= certificate.companyName %></p>
+        <p class="profile-text"><strong>Internship Duration:</strong> <%= certificate.durationMonths %> month(s)</p>
+      </div>
+    </div>
+
+    <div class="glass-card profile-card">
+      <div class="profile-heading">Certificate Preview</div>
+
+      <div style="padding: 18px; text-align:center;">
+        <% if (certificate.certificateFile.endsWith('.pdf')) { %>
+          <iframe
+            src="<%= certificate.certificateFile %>"
+            width="100%"
+            height="600px"
+            style="border:none; border-radius:16px; background:white;">
+          </iframe>
+        <% } else { %>
+          <img
+            src="<%= certificate.certificateFile %>"
+            alt="Certificate"
+            style="max-width:100%; max-height:650px; border-radius:16px; background:white; padding:10px;">
+        <% } %>
+      </div>
+
+      <div style="display:flex; gap:14px; justify-content:center; margin-top: 18px; flex-wrap: wrap;">
+        <a href="<%= certificate.certificateFile %>" target="_blank" class="btn-light-pill">Open Original</a>
+        <a href="<%= certificate.certificateFile %>" download class="btn-primary-glow">Download</a>
+        <a href="/certificates/result/<%= certificate.id %>" class="btn-primary-glow">Back</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

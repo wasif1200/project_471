@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home"><span>⌂</span></a>
+  </div>
+
+  <div class="portal-brand-left">Industry<br>Portal</div>
+
+  <div class="container py-5">
+    <%- include('partials/alerts') %>
+
+    <div class="portal-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Company Login</h1>
+        <p class="portal-main-subtitle">
+          Access your company dashboard and manage internship postings.
+        </p>
+      </div>
+
+      <div class="register-shell login-shell">
+        <form action="/company/login" method="POST">
+          <div class="section-glass">
+            <div class="row g-4">
+              <div class="col-12">
+                <label class="custom-label">Email Address</label>
+                <input type="email" name="email" class="form-control custom-input" placeholder="Enter company email" required>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Password</label>
+                <input type="password" name="password" class="form-control custom-input" placeholder="Enter password" required>
+              </div>
+            </div>
+
+            <div class="text-center mt-4">
+              <button type="submit" class="nav-btn-blue border-0">Login</button>
+            </div>
+
+            <div class="text-center mt-4">
+              <p class="small-muted mb-2">Don’t have a company account?</p>
+              <a href="/company/register" class="dashboard-link">Register as Company</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

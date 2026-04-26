@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Internship Certificate</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="topbar">
+      <div class="logo">✦ Student Portal</div>
+
+      <div class="nav-pill">
+        <a href="/">HOME</a>
+        <a href="/student/internships">EXPLORE INTERNSHIPS</a>
+        <a href="/applications/my">MY APPLICATIONS</a>
+        <a href="/student/dashboard">PROFILE</a>
+      </div>
+    </div>
+
+    <div>
+      <h1 class="hero-title">Hey! Future Intern,</h1>
+      <p class="hero-subtitle">Upload certificates and generate your practical experience rating</p>
+
+      <h2 class="section-title">Add Internship Certificate</h2>
+      <p class="section-subtitle">Upload Your Certificate to generate a Practical Experience Rating</p>
+    </div>
+
+    <form action="/certificates/upload" method="POST" enctype="multipart/form-data">
+      <div class="form-layout">
+        <div>
+          <div class="glass-card upload-box" id="dropArea" >
+            <div style="font-size: 4rem; margin-bottom: 20px;">📄</div>
+            <h3>Drag Drop or Choose File to Upload</h3>
+            <p>PDF, JPG, PNG Accepted</p>
+
+            <div style="width: 100%; margin-top: 24px;">
+              <input type="file" name="certificate" id="certificate" required>
+            </div>
+          </div>
+
+          <div class="glass-card file-bar">
+            <span id="selectedFileName">Internship_Certificate.pdf</span>
+            <span>⌄</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="glass-card side-panel">  
+            <label class="form-label" for="companyName">Company Name:</label>
+            <input type="text" id="companyName" name="companyName" placeholder="Enter company name" required>
+            <label class="form-label" for="durationMonths">Internship Duration:</label>
+            <select id="durationMonths" name="durationMonths" required>
+              <option value="1">1 month</option>
+              <option value="2">2 months</option>
+              <option value="3">3 months</option>
+            </select>
+          </div>
+
+          <div class="publish-btn-wrap">
+            <button type="submit" class="btn-primary-glow full-width-btn">
+              ✦ Generate Rating and Publish
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <script>
+  const certificateInput = document.getElementById("certificate");
+  const selectedFileName = document.getElementById("selectedFileName");
+  const dropArea = document.getElementById("dropArea");
+
+  function updateFileName(file) {
+    if (file) {
+      selectedFileName.textContent = file.name;
+    } else {
+      selectedFileName.textContent = "Internship_Certificate.pdf";
+    }
+  }
+
+  certificateInput.addEventListener("change", function () {
+    if (this.files && this.files.length > 0) {
+      updateFileName(this.files[0]);
+    } else {
+      updateFileName(null);
+    }
+  });
+
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+    document.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+
+  ["dragenter", "dragover"].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => {
+      dropArea.classList.add("dragover");
+    });
+  });
+
+  ["dragleave", "drop"].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => {
+      dropArea.classList.remove("dragover");
+    });
+  });
+
+  dropArea.addEventListener("drop", (e) => {
+    const files = e.dataTransfer.files;
+
+    if (files && files.length > 0) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(files[0]);
+      certificateInput.files = dataTransfer.files;
+      updateFileName(files[0]);
+    }
+  });
+</script>
+
+</body>
+</html>

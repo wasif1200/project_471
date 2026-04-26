@@ -1,0 +1,157 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home">
+      <span>⌂</span>
+    </a>
+  </div>
+
+  <div class="portal-brand-left">Internship + Skill Gap Analyzer</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="register-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Edit Profile</h1>
+        <p class="portal-main-subtitle">
+          Update your student information, academic background, skills, and preferences
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <form action="/student/edit-profile?_method=PUT" method="POST" enctype="multipart/form-data">
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Personal Information</h4>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">First Name</label>
+                <input type="text" name="firstName" value="<%= student.firstName %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Last Name</label>
+                <input type="text" name="lastName" value="<%= student.lastName %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Phone</label>
+                <input type="text" name="phone" value="<%= student.phone || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Country</label>
+                <input type="text" name="country" value="<%= student.country || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">Date of Birth</label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value="<%= student.dateOfBirth ? new Date(student.dateOfBirth).toISOString().split('T')[0] : '' %>"
+                  class="form-control custom-input"
+                >
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">Gender</label>
+                <input type="text" name="gender" value="<%= student.gender || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">Resume PDF</label>
+                <input type="file" name="resume" class="form-control custom-input" accept=".pdf">
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Academic Information</h4>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">University / Institute Name</label>
+                <input type="text" name="universityName" value="<%= student.universityName || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Degree</label>
+                <input type="text" name="degree" value="<%= student.degree || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">Department</label>
+                <input type="text" name="department" value="<%= student.department || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">Semester / Year</label>
+                <input type="text" name="semester" value="<%= student.semester || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-4">
+                <label class="custom-label">CGPA</label>
+                <input type="text" name="cgpa" value="<%= student.cgpa || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Graduation Year</label>
+                <input type="text" name="graduationYear" value="<%= student.graduationYear || '' %>" class="form-control custom-input">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Skills (comma separated)</label>
+                <input
+                  type="text"
+                  name="skills"
+                  class="form-control custom-input"
+                  value="<%= student.skills.map(skill => skill.name).join(', ') %>"
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Experience & Preferences</h4>
+
+            <div class="row g-4">
+              <div class="col-12">
+                <label class="custom-label">Experience</label>
+                <textarea name="experience" class="form-control custom-textarea" rows="4"><%= student.experience || '' %></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Location Preferences</label>
+                <textarea name="locationPreferences" class="form-control custom-textarea" rows="3"><%= student.locationPreferences || '' %></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Sector Preferences</label>
+                <textarea name="sectorPreferences" class="form-control custom-textarea" rows="3"><%= student.sectorPreferences || '' %></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Additional Information</label>
+                <textarea name="additionalInformation" class="form-control custom-textarea" rows="5"><%= student.additionalInformation || '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-action-between mt-4">
+            <a href="/student/dashboard" class="nav-btn-blue text-center">Back to Dashboard</a>
+            <button type="submit" class="nav-btn-blue">Update Profile</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

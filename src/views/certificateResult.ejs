@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Result</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="topbar">
+      <div class="logo">✦ Student Portal</div>
+
+      <div class="nav-pill">
+        <a href="/">HOME</a>
+        <a href="/student/internships">EXPLORE INTERNSHIPS</a>
+        <a href="/applications/my">MY APPLICATIONS</a>
+        <a href="/student/dashboard">PROFILE</a>
+      </div>
+    </div>
+
+    <div class="glass-card rating-banner">
+      <h2>Practical Experience Rating</h2>
+
+      <div class="stars">
+        <% for(let i = 1; i <= 5; i++) { %>
+          <% if(i <= certificate.experienceRating) { %>
+            <span>★</span>
+          <% } else { %>
+            <span class="empty-star">☆</span>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="glass-card profile-card">
+      <div class="profile-heading">Profile Preview</div>
+
+      <div class="profile-body">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+          <div>
+            <div class="company-name"><%= certificate.companyName %></div>
+            <p class="profile-text"><strong>Student:</strong> <%= certificate.studentName %></p>
+            <p class="profile-text"><strong>Internship Duration:</strong> <%= certificate.durationMonths %> month(s)</p>
+            <p class="profile-text muted">Certificate successfully uploaded and rating generated.</p>
+          </div>
+
+          <div>
+            <a class="btn-light-pill" href="/certificates/view/<%= certificate.id %>" target="_blank">
+              View Certificate
+            </a>
+          </div>
+        </div>
+
+        <div style="margin-top: 28px; display:flex; gap:14px; flex-wrap:wrap;">
+          <a href="/certificates" class="btn-primary-glow">Upload Another</a>
+          <a href="/" class="btn-primary-glow">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<%- include('partials/header') %>
+
+<div class="portal-bg">
+  <div class="portal-overlay"></div>
+
+  <div class="portal-home-btn-wrap">
+    <a href="/" class="portal-home-btn" title="Home"><span>⌂</span></a>
+  </div>
+
+  <div class="portal-brand-left">Industry<br>Portal</div>
+
+  <div class="container py-4">
+    <%- include('partials/alerts') %>
+
+    <div class="portal-page-wrap">
+      <div class="portal-page-heading text-center mb-4">
+        <h1 class="portal-main-title">Industry Partner Portal</h1>
+        <p class="portal-main-subtitle">
+          Register your company and post internship opportunities to find the best talent.
+        </p>
+      </div>
+
+      <div class="register-shell">
+        <form action="/company/register" method="POST" enctype="multipart/form-data">
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Company Registration</h4>
+            <p class="join-subtitle mb-4">Provide your company details to get started</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">Company Name</label>
+                <input type="text" name="companyName" class="form-control custom-input" placeholder="Enter your company name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Registration Number</label>
+                <input type="text" name="registrationNumber" class="form-control custom-input" placeholder="Company registration number">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Industry Sector</label>
+                <input type="text" name="industrySector" class="form-control custom-input" placeholder="e.g. Software, Finance, HR">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Company Size</label>
+                <input type="text" name="companySize" class="form-control custom-input" placeholder="e.g. 11-50 employees">
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Company Description</label>
+                <textarea name="companyDescription" class="form-control custom-textarea" placeholder="Describe your company, mission, and work culture"></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Company Website</label>
+                <input type="text" name="companyWebsite" class="form-control custom-input" placeholder="https://www.company.com">
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Contact Information</h4>
+            <p class="join-subtitle mb-4">Primary contact details for internship coordination</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">Contact Person Name</label>
+                <input type="text" name="contactPersonName" class="form-control custom-input" placeholder="HR / Recruiter Name">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Designation</label>
+                <input type="text" name="designation" class="form-control custom-input" placeholder="e.g. HR Manager">
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Company Email</label>
+                <input type="email" name="email" class="form-control custom-input" placeholder="hr@company.com" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Phone Number</label>
+                <input type="text" name="phoneNumber" class="form-control custom-input" placeholder="+8801XXXXXXXXX">
+              </div>
+
+              <div class="col-12">
+                <label class="custom-label">Office Address</label>
+                <textarea name="officeAddress" class="form-control custom-textarea" placeholder="Complete office address"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Login Security</h4>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="custom-label">Password</label>
+                <input type="password" name="password" class="form-control custom-input" placeholder="Create password" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="custom-label">Confirm Password</label>
+                <input type="password" name="confirmPassword" class="form-control custom-input" placeholder="Confirm password" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-glass mb-4">
+            <h4 class="section-heading mb-3">Company Documents</h4>
+            <p class="join-subtitle mb-4">Upload required documents for verification</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="file-upload-box">
+                  <label class="custom-label">Company Registration Certificate</label>
+                  <input type="file" name="registrationCertificate" class="form-control custom-input" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="file-upload-box">
+                  <label class="custom-label">GST Certificate</label>
+                  <input type="file" name="gstCertificate" class="form-control custom-input" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-action-between mt-4">
+            <a href="/" class="glass-btn">Back to Home</a>
+            <button type="submit" class="nav-btn-blue border-0">Register Company</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

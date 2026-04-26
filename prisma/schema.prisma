@@ -1,0 +1,383 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model certificate {
+  id               Int      @id @default(autoincrement())
+  studentId        Int?
+  studentName      String
+  companyName      String
+  certificateFile  String
+  durationMonths   Int
+  experienceRating Int
+  createdAt        DateTime @default(now())
+
+  student          student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  @@index([studentId])
+}
+
+model student {
+  id                    Int            @id @default(autoincrement())
+  name                  String?
+  studentId             String?        @unique
+  firstName             String
+  lastName              String
+  email                 String         @unique(map: "Student_email_key")
+  password              String
+  phone                 String?
+  country               String?
+  dateOfBirth           DateTime?
+  gender                String?
+  resume                String?
+  universityName        String?
+  university            String?
+  degree                String?
+  department            String?
+  semester              String?
+  cgpa                  String?
+  graduationYear        String?
+  experience            String?
+  locationPreferences   String?
+  sectorPreferences     String?
+  additionalInformation String?
+  targetRole            String?
+  bio                   String?
+  interests             String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  applications          application[]
+  skills                studentSkill[]
+  certificates          certificate[]
+  member3Skills            Member3StudentSkill[]
+  member3CompletedCourses Member3CompletedCourse[]
+  member3ProgressHistory  Member3SkillProgressHistory[]
+  member4Skills           Member4StudentSkill[]
+  member4CourseProgress   Member4StudentCourseProgress[]
+  member4ChatSessions     Member4ChatSession[]
+}
+
+model company {
+  id                      Int          @id @default(autoincrement())
+  companyName             String
+  email                   String       @unique(map: "Company_email_key")
+  password                String
+  registrationNumber      String?
+  industrySector          String?
+  companySize             String?
+  companyDescription      String?
+  companyWebsite          String?
+  contactPersonName       String?
+  designation             String?
+  phoneNumber             String?
+  officeAddress           String?
+  registrationCertificate String?
+  gstCertificate          String?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  internship              internship[]
+  companyListings         companylisting[]
+}
+
+model internship {
+  id                    Int           @id @default(autoincrement())
+  location              String?
+  createdAt             DateTime      @default(now())
+  additionalPreferences String?
+  companyId             Int
+  companyName           String?
+  department            String?
+  durationMonths        Int?
+  duration              String?
+  graduationYearRange   String?
+  learningOutcomes      String?
+  minimumDegreeLevel    String?
+  minimumGpaPercentage  String?
+  numberOfPositions     Int           @default(1)
+  preferredFieldOfStudy String?
+  requiredSkills        String?
+  roleDescription       String
+  status                String        @default("ACTIVE")
+  stipend               Float?
+  title                 String
+  updatedAt             DateTime      @updatedAt
+  workMode              String?
+  isRemote              Boolean       @default(false)
+  skillTags             String?
+  applyUrl              String?
+  applicationDeadline   DateTime?
+
+  applications          application[]
+  company               company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  member4RequiredSkills Member4InternshipSkill[]
+  member4SkillRequirements Member4InternshipSkillRequirement[]
+
+  @@index([companyId])
+}
+
+model application {
+  id                Int               @id @default(autoincrement())
+  studentId         Int
+  internshipId      Int
+  status            ApplicationStatus @default(APPLIED)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  interviewDateTime DateTime?
+  interviewLocation String?
+  interviewMeetLink String?
+  interviewNote     String?
+  interviewType     String?
+  internship        internship        @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  student           student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, internshipId])
+  @@index([studentId])
+  @@index([internshipId])
+}
+
+model studentSkill {
+  id        Int     @id @default(autoincrement())
+  name      String
+  studentId Int
+  student   student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@map("studentskill")
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWED
+  INTERVIEW_SCHEDULED
+  REJECTED
+}
+
+// Member 3: Student Skill Progress Tracker
+model Member3Skill {
+  id                     Int                           @id @default(autoincrement())
+  name                   String                        @unique
+  category               String
+  icon                   String?                       @default("⭐")
+  createdAt              DateTime                      @default(now())
+  studentSkills          Member3StudentSkill[]
+  courses                Member3Course[]
+  progressHistory        Member3SkillProgressHistory[]
+
+  @@map("member3_skills")
+}
+
+model Member3StudentSkill {
+  id        Int          @id @default(autoincrement())
+  studentId Int
+  skillId   Int
+  level     Int          @default(1)
+  updatedAt DateTime     @updatedAt
+  student   student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  skill     Member3Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skillId])
+  @@index([studentId])
+  @@index([skillId])
+  @@map("member3_student_skills")
+}
+
+model Member3Course {
+  id               Int                      @id @default(autoincrement())
+  title            String
+  description      String
+  skillId          Int
+  levelRequired    Int                      @default(1)
+  levelGranted     Int                      @default(1)
+  duration         String
+  skill            Member3Skill             @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  completedCourses Member3CompletedCourse[]
+
+  @@unique([title, skillId])
+  @@index([skillId])
+  @@map("member3_courses")
+}
+
+model Member3CompletedCourse {
+  id          Int           @id @default(autoincrement())
+  studentId   Int
+  courseId    Int
+  completedAt DateTime      @default(now())
+  student     student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course      Member3Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([studentId])
+  @@index([courseId])
+  @@map("member3_completed_courses")
+}
+
+model Member3SkillProgressHistory {
+  id         Int          @id @default(autoincrement())
+  studentId  Int
+  skillId    Int
+  level      Int
+  recordedAt DateTime     @default(now())
+  student    student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  skill      Member3Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([skillId])
+  @@map("member3_skill_progress_history")
+}
+
+// Member 4: Skill Analyzer, matching, suggestions, and chatbot
+model Member4Skill {
+  id                          Int                         @id @default(autoincrement())
+  name                        String                      @unique
+  category                    String?
+  description                 String?
+  createdAt                   DateTime                    @default(now())
+  updatedAt                   DateTime                    @updatedAt
+
+  studentSkills               Member4StudentSkill[]
+  internshipSkills            Member4InternshipSkill[]
+  internshipSkillRequirements Member4InternshipSkillRequirement[]
+  courseResources             Member4CourseResource[]
+
+  @@map("member4_skills")
+}
+
+model Member4StudentSkill {
+  id          Int          @id @default(autoincrement())
+  studentId   Int
+  skillId     Int
+  level       Int          @default(3)
+  score       Float        @default(1)
+  chatScore   Int          @default(0)
+  isCompleted Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  student     student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  skill       Member4Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skillId])
+  @@index([studentId])
+  @@index([skillId])
+  @@map("member4_student_skills")
+}
+
+model Member4InternshipSkill {
+  id           Int          @id @default(autoincrement())
+  internshipId Int
+  skillId      Int
+
+  internship   internship   @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  skill        Member4Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, skillId])
+  @@index([internshipId])
+  @@index([skillId])
+  @@map("member4_internship_skills")
+}
+
+model Member4InternshipSkillRequirement {
+  id            Int          @id @default(autoincrement())
+  internshipId  Int
+  skillId       Int
+  requiredScore Float        @default(3)
+
+  internship    internship   @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  cgpa          Int          @default(3)
+  skill         Member4Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, skillId])
+  @@index([internshipId])
+  @@index([skillId])
+  @@map("member4_internship_skill_requirements")
+}
+
+model Member4CourseResource {
+  id               Int                            @id @default(autoincrement())
+  skillId          Int
+  title            String
+  platform         String
+  courseUrl        String
+  difficulty       String                         @default("BEGINNER")
+  estimatedHours   Float                          @default(5)
+  description      String?
+  scoreBoost       Float                          @default(0.5)
+  isActive         Boolean                        @default(true)
+  createdAt        DateTime                       @default(now())
+  updatedAt        DateTime                       @updatedAt
+
+  skill            Member4Skill                   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  studentProgress  Member4StudentCourseProgress[]
+
+  @@unique([skillId, title])
+  @@index([skillId])
+  @@map("member4_course_resources")
+}
+
+model Member4StudentCourseProgress {
+  id               Int                   @id @default(autoincrement())
+  studentId        Int
+  courseResourceId Int
+  status           String                @default("NOT_STARTED")
+  scoreAwarded     Boolean               @default(false)
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  student          student               @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseResource   Member4CourseResource @relation(fields: [courseResourceId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseResourceId])
+  @@index([studentId])
+  @@index([courseResourceId])
+  @@map("member4_student_course_progress")
+}
+
+model Member4ChatSession {
+  id         Int                  @id @default(autoincrement())
+  studentId  Int
+  startedAt  DateTime             @default(now())
+  lastActive DateTime             @updatedAt
+  isActive   Boolean              @default(true)
+
+  student    student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  messages   Member4ChatMessage[]
+
+  @@index([studentId])
+  @@map("member4_chat_sessions")
+}
+
+model Member4ChatMessage {
+  id        Int                @id @default(autoincrement())
+  sessionId Int
+  sender    String
+  message   String
+  intent    String?
+  createdAt DateTime           @default(now())
+
+  session   Member4ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("member4_chat_messages")
+}
+
+// Existing company job listing controller support
+model companylisting {
+  id           Int      @id @default(autoincrement())
+  field        String
+  location     String
+  availability String
+  companyId    Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company      company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}

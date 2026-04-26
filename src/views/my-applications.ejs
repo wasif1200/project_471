@@ -1,0 +1,104 @@
+<%- include("partials/header") %>
+<body>
+  <div class="page-wrapper">
+    <div class="topbar">
+      <div class="logo">✦ Student Portal</div>
+
+      <div class="nav-pill">
+        <a href="/">HOME</a>
+        <a href="/student/internships">EXPLORE INTERNSHIPS</a>
+        <a href="/applications/my">MY APPLICATIONS</a>
+        <a href="/student/dashboard">PROFILE</a>
+      </div>
+    </div>
+
+<div class="container mt-4">
+  <h2 class="mb-4">My Applications</h2>
+
+  <% if (applications.length === 0) { %>
+    <div class="alert alert-info">
+      You have not applied to any internships yet.
+    </div>
+  <% } else { %>
+    <div class="gradient-table mt-4">
+      <table>
+        <thead>
+          <tr>
+            <th>Internship</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Interview Info</th>
+            <th>Last Updated</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% applications.forEach(app => { %>
+            <tr>
+              <td><%= app.internship.title %></td>
+              <td><%= app.internship.company.companyName %></td>
+
+              <!-- STATUS -->
+              <td>
+                <% if (app.status === "APPLIED") { %>
+                  <span class="status-badge status-applied">🟡 Applied</span>
+
+                <% } else if (app.status === "REVIEWED") { %>
+                  <span class="status-badge status-reviewed">🔵 Reviewed</span>
+
+                <% } else if (app.status === "INTERVIEW_SCHEDULED") { %>
+                  <span class="status-badge status-reviewed">🟣 Interview Scheduled</span>
+
+                <% } else if (app.status === "REJECTED") { %>
+                  <span class="status-badge status-rejected">🔴 Rejected</span>
+                <% } %>
+              </td>
+
+              <!-- INTERVIEW INFO -->
+              <td>
+                <% if (app.interviewDateTime) { %>
+
+                  <div><strong>Type:</strong> <%= app.interviewType || "N/A" %></div>
+
+                  <div>
+                    <strong>Time:</strong>
+                    <%= new Date(app.interviewDateTime).toLocaleString() %>
+                  </div>
+
+                  <% if (app.interviewLocation) { %>
+                    <div>
+                      <strong>Place:</strong> <%= app.interviewLocation %>
+                    </div>
+                  <% } %>
+
+                  <% if (app.interviewMeetLink) { %>
+                    <div>
+                      <strong>Link:</strong>
+                      <a href="<%= app.interviewMeetLink %>" target="_blank">
+                        Join Interview
+                      </a>
+                    </div>
+                  <% } %>
+
+                  <% if (app.interviewNote) { %>
+                    <div>
+                      <strong>Note:</strong> <%= app.interviewNote %>
+                    </div>
+                  <% } %>
+
+                <% } else { %>
+                  <span class="text-muted">Not scheduled</span>
+                <% } %>
+              </td>
+
+              <td><%= new Date(app.updatedAt).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+ </div>
+</div>
+<%- include("partials/footer") %>
+</body>
